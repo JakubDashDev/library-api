@@ -7,4 +7,6 @@ Rails.application.routes.draw do
       post :return
     end
   end
+
+  resources :customers, only: %i[index show create]
 end
