@@ -15,7 +15,7 @@ Emails can be viewed in Mailpit at `http://localhost:8025`
 ## Key design decisions
 
 1. Solid Queue is used for background job processing because it's built into Rails. No extra infrastructure needed, which keeps the setup simple and is enough for an early stage API.
-2. Serial numbers and customer card numbers are server-generated, six-digit strings. Since they're never used as database primary/foreign keys, storing them as strings costs nothing, while preserving genuine leading zeros and matching the "six-digit number" requirement literally. Uniqueness and format are enforced at both the Rails and database level.
+2. Serial numbers and customer card numbers are server-generated, six-digit strings, produced by picking a random number and retrying on collision. Since they're never used as database primary/foreign keys, storing them as strings costs nothing, while preserving genuine leading zeros and matching the "six-digit number" requirement literally. Uniqueness and format are enforced at both the Rails and database level. A Postgres sequence was omitted to keep app startup simple.
 3. A book's status is derived from its most recent borrowing's `returned_at` value, rather than stored as its own column. It is enough to answer "is this book available," with no risk of the two drifting out of sync.
 4. Blueprinter is used for serializing data because it is lightweight, with named views to separate a lightweight list representation from a detailed one that includes full borrowing history.
 5. Reminder emails are scheduled as individual jobs at the moment a book is borrowed, rather than a periodic polling job. Early returns cancel their scheduled reminder jobs directly through Solid Queue's execution records.
