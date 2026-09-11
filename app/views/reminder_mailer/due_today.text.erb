@@ -1,0 +1,6 @@
+Hi <%= @customer.full_name %>,
+
+This is a reminder that "<%= @book.title %>" (serial number <%= @book.serial_number %>) is due for return today, <%= @borrowing.due_date.to_date %>.
+
+Thank you,
+The Library
