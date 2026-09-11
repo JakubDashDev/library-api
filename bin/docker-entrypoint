@@ -2,5 +2,6 @@
 
 # If running the rails server then create or migrate existing database
 ./bin/rails db:prepare
+./bin/rails db:seed
 
 exec "${@}"
