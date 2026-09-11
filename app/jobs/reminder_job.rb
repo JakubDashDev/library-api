@@ -2,7 +2,7 @@ class ReminderJob < ApplicationJob
   queue_as :default
 
   def perform(borrowing_id, kind)
-    borrowing = Borrowing.find_by(id: borrowing_id)
+    borrowing = Borrowing.includes(:book, :customer).find_by(id: borrowing_id)
     return if borrowing.nil? || borrowing.returned?
 
     case kind
