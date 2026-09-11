@@ -16,6 +16,14 @@ Rails.application.configure do
   config.server_timing = true
 
   config.solid_queue.connects_to = { database: { writing: :queue } }
+  config.active_job.queue_adapter = :solid_queue
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address: "mailpit",
+    port: 1025,
+    enable_starttls_auto: false
+  }
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
