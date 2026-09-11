@@ -12,8 +12,13 @@ class Customer < ApplicationRecord
   def assign_library_card_number
     return if library_card_number.present?
 
-    card_number = self.class.connection.select_value("SELECT nextval('customers_library_card_number_seq')")
-    self.library_card_number = format("%06d", card_number)
+    loop do
+      candidate = format("%06d", rand(1..999_999))
+      unless self.class.exists?(library_card_number: candidate)
+        self.library_card_number = candidate
+        break
+      end
+    end
   end
 
   def normalize_email
