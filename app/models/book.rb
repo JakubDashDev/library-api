@@ -19,7 +19,12 @@ class Book < ApplicationRecord
   def assign_serial_number
     return if serial_number.present?
 
-    serial_number = self.class.connection.select_value("SELECT nextval('books_serial_number_seq')")
-    self.serial_number = format("%06d", serial_number)
+    loop do
+      candidate = format("%06d", rand(1..999_999))
+      unless self.class.exists?(serial_number: candidate)
+        self.serial_number = candidate
+        break
+      end
+    end
   end
 end
