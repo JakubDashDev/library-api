@@ -9,7 +9,7 @@ class Book < ApplicationRecord
   def assign_serial_number
     return if serial_number.present?
 
-    next_value = self.class.connection.select_value("SELECT nextval('books_serial_number_seq')")
-    self.serial_number = format("%06d", next_value)
+    serial_number = self.class.connection.select_value("SELECT nextval('books_serial_number_seq')")
+    self.serial_number = format("%06d", serial_number)
   end
 end
