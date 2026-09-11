@@ -5,6 +5,8 @@ class Borrowing < ApplicationRecord
   before_validation :set_borrows_date, on: :create
   validate :book_not_already_borrowed, on: :create
 
+  after_create_commit :schedule_reminders
+
   def returned?
     returned_at.present?
   end
@@ -23,5 +25,10 @@ class Borrowing < ApplicationRecord
     return unless book
 
     errors.add(:book, "is already borrowed") if book.borrowings.active.exists?
+  end
+
+  def schedule_reminders
+    ReminderJob.set(wait_until: due_date - 3.days).perform_later(id, "due_soon")
+    ReminderJob.set(wait_until: due_date).perform_later(id, "due_today")
   end
 end
