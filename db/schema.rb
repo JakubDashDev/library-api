@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_11_160351) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_11_162218) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_160351) do
     t.check_constraint "serial_number::text ~ '^[0-9]{6}$'::text", name: "books_serial_number_format"
   end
 
+  create_table "borrowings", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "borrowed_at", null: false
+    t.datetime "created_at", null: false
+    t.bigint "customer_id", null: false
+    t.datetime "due_date", null: false
+    t.datetime "returned_at"
+    t.datetime "updated_at", null: false
+    t.index ["book_id"], name: "index_borrowings_on_book_id"
+    t.index ["book_id"], name: "index_borrowings_on_book_id_when_active", unique: true, where: "(returned_at IS NULL)"
+    t.index ["customer_id"], name: "index_borrowings_on_customer_id"
+  end
+
   create_table "customers", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
@@ -34,4 +47,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_160351) do
     t.index ["library_card_number"], name: "index_customers_on_library_card_number", unique: true
     t.check_constraint "library_card_number::text ~ '^[0-9]{6}$'::text", name: "customers_library_card_number_format"
   end
+
+  add_foreign_key "borrowings", "books", on_delete: :cascade
+  add_foreign_key "borrowings", "customers", on_delete: :cascade
 end
