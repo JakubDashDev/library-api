@@ -1,0 +1,156 @@
+{
+  "info": {
+    "_postman_id": "3f9a2b7e-6c1d-4a3f-9e2b-7c1d4a3f9e2b",
+    "name": "Library Management API",
+    "description": "Endpoints for tracking books, customers, and borrowing for the library management take-home assignment.\n\nRun requests top-to-bottom within a folder (or use Collection Runner) for a full demo flow: create a customer, create a book, borrow it, view its history, then return it.\n\nSet the `base_url` collection variable if the API isn't running on the default `http://localhost:3000`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000", "type": "string" },
+    { "key": "book_id", "value": "", "type": "string" },
+    { "key": "customer_id", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "List customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/customers"
+          }
+        },
+        {
+          "name": "Create customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set(\"customer_id\", json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"full_name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\"\n}"
+            },
+            "url": "{{base_url}}/customers"
+          }
+        },
+        {
+          "name": "Show customer",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/customers/{{customer_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "List books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/books"
+          }
+        },
+        {
+          "name": "Create book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set(\"book_id\", json.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Dune\",\n  \"author\": \"Frank Herbert\"\n}"
+            },
+            "url": "{{base_url}}/books"
+          }
+        },
+        {
+          "name": "Show book (with borrowing history)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/books/{{book_id}}"
+          }
+        },
+        {
+          "name": "Borrow book",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer_id\": {{customer_id}}\n}"
+            },
+            "url": "{{base_url}}/books/{{book_id}}/borrow"
+          }
+        },
+        {
+          "name": "Return book",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": "{{base_url}}/books/{{book_id}}/return"
+          }
+        },
+        {
+          "name": "Delete book",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/books/{{book_id}}"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health check",
+      "item": [
+        {
+          "name": "GET /up",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/up"
+          }
+        }
+      ]
+    }
+  ]
+}
