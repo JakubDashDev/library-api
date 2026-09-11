@@ -54,6 +54,13 @@ services:
       timeout: 30s
       retries: 5
       start_period: 30s
+  mailpit:
+    container_name: mailpit
+    image: axllent/mailpit
+    ports: 
+      - 8025:8025
+    depends_on:
+      - rails_api
 
 volumes:
   db_data:
