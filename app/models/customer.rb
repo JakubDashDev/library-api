@@ -1,4 +1,6 @@
 class Customer < ApplicationRecord
+  has_many :borrowings, dependent: :destroy
+
   before_validation :assign_library_card_number, on: :create
   before_validation :normalize_email
 
